@@ -2,7 +2,9 @@
 #os -> arquivos do computador
 #pywin32 -> enviar email  
 import os
+from datetime import datetime
 import pandas as pd
+import win32com.client as win32 #enviar email
 
 caminho = "bases/"
 arquivos = os.listdir(caminho)
@@ -24,3 +26,27 @@ for nome_arquivo in arquivos:
 
     print(tabela_consolidada)
     tabela_consolidada.to_excel("Vendas.xlsx", index=False)
+
+
+
+#Enviar email
+outlook = win32.Dispatch('outlook.application')
+email = outlook.CreateItem(0)
+email.To = "julioscarcelli31@gmail.com"
+data_hoje = datetime.today().strftime("%d/%m/%Y")
+email.Subject = f"Relatório de Vendas {data_hoje}"
+email.Body = f"""
+Prezados,
+
+Segue em anexo o Relatório de Vendas de {data_hoje} atualizado.
+Qualquer coisa estou a disposição.
+Abs, 
+Julio Scarceli
+"""
+
+
+caminho = os.getcwd()
+anexo = os.path.join(caminho, "Vendas.xlsx")
+email.Attachments.Add(anexo)
+
+email.Send()
